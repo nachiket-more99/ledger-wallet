@@ -1,0 +1,13 @@
+# backend (NestJS)
+backend/node_modules/
+backend/dist/
+backend/.env
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# common
+node_modules/
+.env
