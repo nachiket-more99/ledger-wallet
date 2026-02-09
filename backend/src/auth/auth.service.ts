@@ -2,10 +2,11 @@ import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { AuthDto } from "./dto";
 import * as argon from "argon2";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService{
-    constructor(private prisma: PrismaService){}
+    constructor(private prisma: PrismaService, private jwt: JwtService){}
 
     async register(dto: AuthDto){
         // generate password hash
@@ -52,13 +53,17 @@ export class AuthService{
                 'Credentials incorrect'
             )
 
-        //send back the user
+        //send back the JWT payload 
+        const payload = {
+            sub: user.id,
+            email: user.email,
+        };
+
+        const token = await this.jwt.signAsync(payload);
+
         return {
-            "message": "user is logged in",
-            userDetails: {
-                email: user.email,
-                role: user.role
-            }
-        }    
+            message: 'user is logged in',
+            access_token: token,
+        };   
     }
 }
