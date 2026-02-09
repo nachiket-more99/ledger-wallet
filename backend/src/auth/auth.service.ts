@@ -1,19 +1,64 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { AuthDto } from "./dto";
+import * as argon from "argon2";
 
 @Injectable()
 export class AuthService{
     constructor(private prisma: PrismaService){}
 
-    register(dto: AuthDto){
+    async register(dto: AuthDto){
+        // generate password hash
+        const hash = await argon.hash(dto.password)
+
+        // save the user in db
+        const user = await this.prisma.user.create({
+            data:{
+                email: dto.email,
+                passwordHash: hash,
+                role: dto.role
+            }
+        })
+
+        // return saved user
         return {
-            "message": "i am registred"
+            "message": "user registred",
+            userDetails: {
+                email: user.email,
+                role: user.role
+            }
         }    
     }
-    login(){
+    
+    async login(dto: AuthDto){
+        // find user by email
+        const user = await this.prisma.user.findUnique({
+            where: {
+                email: dto.email
+            }
+        })
+        // if user does not exists then thow exception
+        if (!user)
+            throw new ForbiddenException(
+                'Credentials incorrect'
+            )
+
+        // compare password
+        const pwMatches = await argon.verify(user.passwordHash, dto.password)
+
+        // if not match then exception
+        if (!pwMatches)
+            throw new ForbiddenException(
+                'Credentials incorrect'
+            )
+
+        //send back the user
         return {
-            "message": "i am logged in"
+            "message": "user is logged in",
+            userDetails: {
+                email: user.email,
+                role: user.role
+            }
         }    
     }
 }
