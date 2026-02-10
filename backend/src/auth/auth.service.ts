@@ -21,6 +21,12 @@ export class AuthService{
             }
         })
 
+        await this.prisma.wallet.create({
+            data: {
+                userId: user.id,
+            }
+        })
+
         // return saved user
         return {
             "message": "user registred",
