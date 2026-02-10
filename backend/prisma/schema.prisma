@@ -12,13 +12,24 @@ datasource db {
   provider = "postgresql"
 }
 
+enum LedgerType {
+  CREDIT
+  DEBIT
+}
+
+enum ReferenceType {
+  PAYMENT
+  TRANSFER
+}
+
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  passwordHash String
-  role         String
-  createdAt    DateTime @default(now())
-  wallet       Wallet?
+  id            String        @id @default(uuid())
+  email         String        @unique
+  passwordHash  String
+  role          String
+  createdAt     DateTime      @default(now())
+  wallet        Wallet?
+  ledgerEntries LedgerEntry[]
 
   @@map("users")
 }
@@ -30,4 +41,17 @@ model Wallet {
   createdAt DateTime @default(now())
 
   @@map("wallets")
+}
+
+model LedgerEntry {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  amount        Int
+  type          LedgerType
+  referenceType ReferenceType
+  referenceId   String
+  createdAt     DateTime      @default(now())
+
+  @@map("ledger_entries")
 }
