@@ -4,13 +4,14 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserController } from './user/user.controller';
 import { WalletModule } from './wallet/wallet.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [ 
     ConfigModule.forRoot({
       isGlobal: true,
     }), 
-    AuthModule, PrismaModule, WalletModule],
+    AuthModule, PrismaModule, WalletModule, PaymentModule],
   controllers: [UserController]
 })
 export class AppModule {}
