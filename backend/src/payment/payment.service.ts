@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentDto, WebhookDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { LedgerType, StatusType, ReferenceType } from '@prisma/client';
+import { LedgerType, PaymentStatusType, ReferenceType } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class PaymentService {
                 provider: dto.provider,
                 userId: userId,
                 amount: Number(dto.amount),
-                status: StatusType.CREATED
+                status: PaymentStatusType.CREATED
             },
             select: {
                 providerOrderId: true,
@@ -38,7 +38,7 @@ export class PaymentService {
             where: { providerOrderId: dto.providerOrderId },
             data: {
                 providerPaymentId,
-                status: StatusType.SUCCESS
+                status: PaymentStatusType.SUCCESS
             }
         })
 
