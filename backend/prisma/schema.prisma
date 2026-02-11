@@ -22,6 +22,12 @@ enum ReferenceType {
   TRANSFER
 }
 
+enum StatusType {
+  CREATED
+  SUCCESS
+  FAILED
+}
+
 model User {
   id            String        @id @default(uuid())
   email         String        @unique
@@ -30,6 +36,7 @@ model User {
   createdAt     DateTime      @default(now())
   wallet        Wallet?
   ledgerEntries LedgerEntry[]
+  payment Payment[]
 
   @@map("users")
 }
@@ -45,8 +52,10 @@ model Wallet {
 
 model LedgerEntry {
   id            String        @id @default(uuid())
+
   userId        String
   user          User          @relation(fields: [userId], references: [id])
+
   amount        Int
   type          LedgerType
   referenceType ReferenceType
@@ -54,4 +63,20 @@ model LedgerEntry {
   createdAt     DateTime      @default(now())
 
   @@map("ledger_entries")
+}
+
+model Payment {
+  id                    String        @id @default(uuid())
+  provider              String
+  providerOrderId       String        @unique        @default(uuid())
+  providerPaymentId     String?       @unique
+
+  userId                String
+  user                  User          @relation(fields: [userId], references: [id])
+
+  amount                Int
+  status                StatusType
+  createdAt             DateTime      @default(now())
+
+  @@map("payments")
 }
