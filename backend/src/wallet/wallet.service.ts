@@ -39,6 +39,18 @@ export class WalletService {
         }
     }
     async getTransactions(userIdValue: string){
+        const cacheKey = `wallet:transactions:${userIdValue}`
+
+        const cached = await this.redisService.get(cacheKey)
+
+        if (cached) {
+            return {
+                "message": 'Transactions fetched',
+                source: 'cache',
+                transactions: JSON.parse(cached)
+            }
+        }
+
         const transactions = await this.prisma.ledgerEntry.findMany({
             where:{
                 userId: userIdValue
@@ -48,8 +60,11 @@ export class WalletService {
             }
         })
 
+        await this.redisService.set(cacheKey, transactions, 60)
+
         return {
             "message": 'Transactions fetched',
+            source: 'db',
             transactions: transactions
         }
     }    
