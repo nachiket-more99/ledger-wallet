@@ -10,3 +10,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "123"
       POSTGRES_DB: ledger_wallet
+
+  redis:
+    image: redis:7
+    container_name: ledger-wallet-redis
+    ports:
+      - "6379:6379"
