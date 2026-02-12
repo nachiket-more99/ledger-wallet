@@ -6,6 +6,7 @@ import { RedisModule } from 'src/redis/redis.module';
 @Module({
     imports: [RedisModule],
     controllers: [WalletController],
-    providers: [WalletService]
+    providers: [WalletService],
+    exports: [WalletService]
 })
 export class WalletModule {}

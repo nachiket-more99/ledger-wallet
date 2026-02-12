@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { LedgerType } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
 
@@ -19,16 +20,37 @@ export class WalletService {
             };
         }
 
-        const result = await this.prisma.ledgerEntry.aggregate({
-            where: {
-                userId: userIdValue,
-            },
-            _sum: {
-                amount: true,
-            },
+        // const result = await this.prisma.ledgerEntry.aggregate({
+        //     where: {
+        //         userId: userIdValue,
+        //     },
+        //     _sum: {
+        //         amount: true,
+        //     },
+        // });
+
+        const credit = await this.prisma.ledgerEntry.aggregate({
+        where: {
+            userId: userIdValue,
+            type: LedgerType.CREDIT,
+        },
+        _sum: {
+            amount: true,
+        },
         });
 
-        const balance = result._sum.amount ?? 0;
+        const debit = await this.prisma.ledgerEntry.aggregate({
+        where: {
+            userId: userIdValue,
+            type: LedgerType.DEBIT,
+        },
+        _sum: {
+            amount: true,
+        },
+        });
+
+        const balance = (credit._sum.amount ?? 0) - (debit._sum.amount ?? 0);
+
 
         await this.redisService.set(cacheKey, balance, 30)
 
