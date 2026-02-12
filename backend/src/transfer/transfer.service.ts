@@ -39,6 +39,11 @@ export class TransferService {
                     'Recipent does not exists'
                 )
             console.log("passed recipent email id test")
+
+            // prevent self transfer
+            if (recipentUser.id === userId) 
+                throw new ForbiddenException('Cannot transfer to yourself');
+                
                 
             // create entry in Transfer table
             const transfer = await this.prisma.transfer.create({
