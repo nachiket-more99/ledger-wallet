@@ -77,6 +77,12 @@ export class WalletService {
             where:{
                 userId: userIdValue
             },
+            select:{
+                amount: true,
+                type: true,
+                referenceType: true,
+                createdAt: true
+            },
             orderBy:{
                 createdAt: 'desc'
             }
