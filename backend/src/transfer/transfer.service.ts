@@ -25,7 +25,7 @@ export class TransferService {
             console.log("fetched balance: ", balance)
 
             // check if balance < dto.amount
-            if (Number(balance) < Number(dto.amount)) 
+            if (Number(balance.balance) < Number(dto.amount)) 
                 throw new ForbiddenException(
                     'Insufficient balance'
                 )
