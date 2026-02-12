@@ -6,13 +6,14 @@ import { UserController } from './user/user.controller';
 import { WalletModule } from './wallet/wallet.module';
 import { PaymentModule } from './payment/payment.module';
 import { TransferModule } from './transfer/transfer.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [ 
     ConfigModule.forRoot({
       isGlobal: true,
     }), 
-    AuthModule, PrismaModule, WalletModule, PaymentModule, TransferModule],
+    AuthModule, PrismaModule, WalletModule, PaymentModule, TransferModule, AdminModule],
   controllers: [UserController]
 })
 export class AppModule {}
