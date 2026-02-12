@@ -3,10 +3,11 @@ import { PaymentDto, WebhookDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LedgerType, PaymentStatusType, ReferenceType } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class PaymentService {
-    constructor(private prisma: PrismaService){}
+    constructor(private prisma: PrismaService, private redisService: RedisService){}
 
     async create(userId: string, dto: PaymentDto) {
         const payment = await this.prisma.payment.create({
@@ -51,6 +52,10 @@ export class PaymentService {
                 referenceId: payment.id
             }
         })
+
+        
+        // invalidate cache
+        await this.redisService.delete(`wallet:balance:${userId}`);
 
 
         return {
