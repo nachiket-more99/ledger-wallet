@@ -5,45 +5,40 @@ const prisma = new PrismaService();
 
 async function main() {
   const ledgerEntriesSeed = [
+    // User 1 → total 1000
     {
-      userId: '25fc5598-3958-4166-ae88-a09003993eb3',
-      amount: 1000,
+      userId: '6cb5f9c2-8655-443c-a82a-07846d9a85af',
+      amount: 400,
       type: LedgerType.CREDIT,
       referenceType: ReferenceType.PAYMENT,
-      referenceId: 'pay-001',
+      referenceId: 'u1-pay-001',
       createdAt: new Date('2026-02-01T10:00:00Z'),
     },
     {
-      userId: '25fc5598-3958-4166-ae88-a09003993eb3',
-      amount: -300,
-      type: LedgerType.DEBIT,
-      referenceType: ReferenceType.PAYMENT,
-      referenceId: 'pay-002',
-      createdAt: new Date('2026-02-02T14:15:00Z'),
-    },
-    {
-      userId: '25fc5598-3958-4166-ae88-a09003993eb3',
-      amount: 500,
+      userId: '6cb5f9c2-8655-443c-a82a-07846d9a85af',
+      amount: 600,
       type: LedgerType.CREDIT,
       referenceType: ReferenceType.PAYMENT,
-      referenceId: 'pay-003',
-      createdAt: new Date('2026-02-03T09:30:00Z'),
+      referenceId: 'u1-pay-002',
+      createdAt: new Date('2026-02-02T12:00:00Z'),
     },
+
+    // User 2 → total 500
     {
-      userId: '25fc5598-3958-4166-ae88-a09003993eb3',
-      amount: -200,
-      type: LedgerType.DEBIT,
-      referenceType: ReferenceType.PAYMENT,
-      referenceId: 'pay-004',
-      createdAt: new Date('2026-02-04T11:45:00Z'),
-    },
-    {
-      userId: '25fc5598-3958-4166-ae88-a09003993eb3',
-      amount: 1200,
+      userId: 'fd3a82de-5e05-458f-8648-0dc2eb8dbae5',
+      amount: 200,
       type: LedgerType.CREDIT,
       referenceType: ReferenceType.PAYMENT,
-      referenceId: 'pay-005',
-      createdAt: new Date('2026-02-05T16:00:00Z'),
+      referenceId: 'u2-pay-001',
+      createdAt: new Date('2026-02-03T09:00:00Z'),
+    },
+    {
+      userId: 'fd3a82de-5e05-458f-8648-0dc2eb8dbae5',
+      amount: 300,
+      type: LedgerType.CREDIT,
+      referenceType: ReferenceType.PAYMENT,
+      referenceId: 'u2-pay-002',
+      createdAt: new Date('2026-02-04T11:00:00Z'),
     },
   ];
 
