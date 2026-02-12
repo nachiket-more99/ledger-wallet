@@ -5,13 +5,14 @@ import { ConfigModule } from '@nestjs/config';
 import { UserController } from './user/user.controller';
 import { WalletModule } from './wallet/wallet.module';
 import { PaymentModule } from './payment/payment.module';
+import { TransferModule } from './transfer/transfer.module';
 
 @Module({
   imports: [ 
     ConfigModule.forRoot({
       isGlobal: true,
     }), 
-    AuthModule, PrismaModule, WalletModule, PaymentModule],
+    AuthModule, PrismaModule, WalletModule, PaymentModule, TransferModule],
   controllers: [UserController]
 })
 export class AppModule {}
