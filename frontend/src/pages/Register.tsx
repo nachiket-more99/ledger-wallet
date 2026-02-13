@@ -12,15 +12,17 @@ import { Label } from "@/components/ui/label";
 import { Wallet, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
-export function Login() {
+export function Register() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
+    confirmPassword?: string;
   }>({});
 
   const validate = () => {
@@ -28,21 +30,20 @@ export function Login() {
 
     if (!email) newErrors.email = "Email is required";
     if (!password) newErrors.password = "Password is required";
+    if (!confirmPassword)
+      newErrors.confirmPassword = "Confirm password is required";
+    if (password && confirmPassword && password !== confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    console.log({
-      user: {
-        email,
-        password,
-      },
-    });
+    console.log({ email, password });
   };
 
   return (
@@ -52,19 +53,16 @@ export function Login() {
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
             <Wallet className="h-6 w-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">
-            Ledger Wallet
-          </CardTitle>
-          <CardDescription>Sign in to your account</CardDescription>
+          <CardTitle className="text-2xl font-bold tracking-tight">Create Account</CardTitle>
+          <CardDescription>Join Ledger Wallet today</CardDescription>
         </CardHeader>
 
-        <form onSubmit={handleSignIn}>
+        <form onSubmit={handleSignUp}>
           <CardContent className="flex flex-col gap-6 px-6 pb-6">
             {/* Email */}
             <div className="grid gap-1">
-              <Label htmlFor="email">Email</Label>
+              <Label>Email</Label>
               <Input
-                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -78,20 +76,17 @@ export function Login() {
 
             {/* Password */}
             <div className="grid gap-1">
-              <Label htmlFor="password">Password</Label>
+              <Label>Password</Label>
               <div className="relative">
                 <Input
-                  id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  tabIndex={-1}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -102,20 +97,35 @@ export function Login() {
                 </p>
               )}
             </div>
+
+            {/* Confirm Password */}
+            <div className="grid gap-1">
+              <Label>Confirm Password</Label>
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              {errors.confirmPassword && (
+                <p className="text-xs text-destructive">
+                  {errors.confirmPassword}
+                </p>
+              )}
+            </div>
           </CardContent>
 
           <CardFooter className="flex-col gap-3">
             <Button type="submit" className="w-full">
-              Log In
+              Register
             </Button>
 
             <p className="text-sm text-muted-foreground">
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <a
                 className="font-medium text-primary hover:underline"
-                href="/register"
+                href="/"
               >
-                Register
+                Log in
               </a>
             </p>
           </CardFooter>
