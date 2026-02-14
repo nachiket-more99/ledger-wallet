@@ -1,8 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import {
   PlusCircle,
@@ -10,19 +7,22 @@ import {
   ArrowUpRight,
   ArrowDownLeft,
 } from "lucide-react";
-import { mockTransactions, mockBalance, mockUserDetails } from "@/lib/mock-data";
+import {
+  mockTransactions,
+  mockBalance,
+  mockUserDetails,
+} from "@/lib/mock-data";
 
 interface Transactions {
-    title: string,
-    date: string,
-    amount: number,
-    direction: string,
-    referenceId: string,
+  title: string;
+  date: string;
+  amount: number;
+  direction: string;
+  referenceId: string;
 }
 
 export function Dashboard() {
-  const userTxns: Transactions[] = mockTransactions
-    .slice(0, 5);
+  const userTxns: Transactions[] = mockTransactions.slice(0, 5);
 
   return (
     <div className="space-y-8">
@@ -30,10 +30,11 @@ export function Dashboard() {
         <div className="p-8">
           <p className="text-sm font-medium opacity-80">Available Balance</p>
           <p className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
-            ₹{mockBalance.balance.toLocaleString('en-IN')}
+            ₹{mockBalance.balance.toLocaleString("en-IN")}
           </p>
           <p className="mt-1 text-sm opacity-70">
-            {mockUserDetails.firstName} {mockUserDetails.lastName} · {mockUserDetails.email}
+            {mockUserDetails.firstName} {mockUserDetails.lastName} ·{" "}
+            {mockUserDetails.email}
           </p>
         </div>
       </Card>
@@ -94,7 +95,7 @@ export function Dashboard() {
                     <div>
                       <p className="text-sm font-medium">{txn.title}</p>
                       <p className="text-xs text-muted-foreground">
-                        {txn.date.split('T')[0]}
+                        {txn.date.split("T")[0]}
                       </p>
                     </div>
                   </div>
@@ -105,8 +106,11 @@ export function Dashboard() {
                         : "text-destructive"
                     }`}
                   >
-                    {txn.direction === "IN" ? "+" : "–"}{" "}
-                    ₹{txn.amount.toLocaleString('en-IN')}
+                    {txn.direction === "IN" ? "+" : "–"} ₹
+                    {txn.amount.toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </span>
                 </div>
               ))
