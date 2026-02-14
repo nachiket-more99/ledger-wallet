@@ -12,17 +12,16 @@ import { mockTransactions } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
 
 interface Transactions {
-    title: string,
-    date: string,
-    amount: number,
-    type: string,
-    direction: string,
-    referenceId: string,
+  title: string;
+  date: string;
+  amount: number;
+  type: string;
+  direction: string;
+  referenceId: string;
 }
 
-
 export function Transactions() {
-  const transactions: Transactions[] = mockTransactions
+  const transactions: Transactions[] = mockTransactions;
 
   return (
     <div>
@@ -42,7 +41,9 @@ export function Transactions() {
             <TableBody>
               {transactions.map((txn) => (
                 <TableRow key={txn.referenceId}>
-                  <TableCell className="text-sm">{txn.date.split('T')[0]}</TableCell>
+                  <TableCell className="text-sm">
+                    {txn.date.split("T")[0]}
+                  </TableCell>
                   <TableCell className="text-sm">{txn.title}</TableCell>
                   <TableCell>
                     <Badge
@@ -56,10 +57,22 @@ export function Transactions() {
                       {txn.type === "CREDIT" ? "Credit" : "Debit"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{txn.referenceId}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {txn.referenceId}
+                  </TableCell>
                   <TableCell className="text-right text-sm font-semibold">
-                    <span className={txn.type === "CREDIT" ? "text-success" : "text-destructive"}>
-                      {txn.type === "CREDIT" ? "+" : "–"} ₹{txn.amount.toLocaleString('en-IN')}
+                    <span
+                      className={
+                        txn.type === "CREDIT"
+                          ? "text-success"
+                          : "text-destructive"
+                      }
+                    >
+                      {txn.type === "CREDIT" ? "+" : "–"} ₹
+                      {txn.amount.toLocaleString("en-IN", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </span>
                   </TableCell>
                 </TableRow>
