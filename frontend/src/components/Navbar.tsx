@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Wallet, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -8,14 +9,32 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { mockUserDetails } from "@/lib/mock-data";
+import { logout } from "@/api/auth.api";
+import { useNavigate } from "react-router-dom";
+import { getMe } from "@/api/user.api";
+
 
 export function Navbar() {
-  const user = mockUserDetails
+  const navigate = useNavigate(); 
+  const [user, setUser] = useState<any>(null);
 
+  useEffect(() => {
+    getMe()
+      .then(setUser)
+      .catch(() => {
+        navigate("/")
+      });
+  }, []);
+
+  if (!user) {
+    return <div className="h-16 border-b bg-background" />; 
+  }
   const initials = user.firstName[0] +  user.lastName[0];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log("Logout clicked");
+    await logout();    
+    navigate("/");
   };
 
   return (

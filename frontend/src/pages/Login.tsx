@@ -12,7 +12,13 @@ import { Label } from "@/components/ui/label";
 import { Wallet, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
+import { login } from "@/api/auth.api";
+
+import { useNavigate } from "react-router-dom";
+
+
 export function Login() {
+const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -33,16 +39,18 @@ export function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    console.log({
-      user: {
-        email,
-        password,
-      },
-    });
+    try {
+      await login(email, password);
+
+      navigate("/dashboard"); 
+    } catch (err: any) {
+      // ✅ show backend error
+      setErrors(err?.response?.data?.message ?? "Login failed");
+    }
   };
 
   return (
@@ -70,9 +78,7 @@ export function Login() {
                 onChange={(e) => setEmail(e.target.value)}
               />
               {errors.email && (
-                <p className="text-xs text-destructive">
-                  {errors.email}
-                </p>
+                <p className="text-xs text-destructive">{errors.email}</p>
               )}
             </div>
 
@@ -97,9 +103,7 @@ export function Login() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-destructive">
-                  {errors.password}
-                </p>
+                <p className="text-xs text-destructive">{errors.password}</p>
               )}
             </div>
           </CardContent>
