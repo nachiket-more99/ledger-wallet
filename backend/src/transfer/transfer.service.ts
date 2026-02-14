@@ -88,6 +88,8 @@ export class TransferService {
             //return response        
             return {
                 "message": "Money sent successfully",
+                "firstName" : dto.firstName,
+                "lastName" : dto.lastName,
                 "recipientEmail": dto.recipientEmail,
                 "amount": transfer.amount,
                 "status": transfer.status,

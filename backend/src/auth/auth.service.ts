@@ -15,6 +15,8 @@ export class AuthService{
         // save the user in db
         const user = await this.prisma.user.create({
             data:{
+                firstName: dto.firstName,
+                lastName: dto.lastName,
                 email: dto.email,
                 passwordHash: hash,
                 role: dto.role
@@ -31,6 +33,8 @@ export class AuthService{
         return {
             "message": "user registred",
             userDetails: {
+                firstName: user.firstName,
+                lastName: user.lastName,
                 email: user.email,
                 role: user.role
             }
@@ -62,6 +66,8 @@ export class AuthService{
         //send back the JWT payload 
         const payload = {
             sub: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             role: user.role
         };

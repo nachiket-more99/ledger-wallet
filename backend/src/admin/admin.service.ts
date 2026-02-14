@@ -12,6 +12,8 @@ export class AdminService {
             where: { role: "USER" },
             select: {
                 id: true,
+                firstName: true,
+                lastName: true,
                 email: true,
                 createdAt: true
             }
@@ -23,6 +25,8 @@ export class AdminService {
             const balanceData = await this.wallet.getBalance(user.id);
             
             usersWithBalance.push({
+                firstName: user.firstName,
+                lastName: user.lastName,
                 email: user.email,
                 balance: balanceData.balance, 
                 createdAt: user.createdAt
@@ -39,7 +43,14 @@ export class AdminService {
                 type: true,
                 referenceId: true,
                 amount: true,
-                user: { select: { email: true } }
+                user: { 
+                    select: 
+                    { 
+                        firstName: true,
+                        lastName: true,
+                        email: true 
+                    } 
+                }
             },
             orderBy: {
                 createdAt: 'desc' 
