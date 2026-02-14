@@ -1,6 +1,5 @@
 import { Wallet, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Popover,
@@ -8,18 +7,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { mockUserDetails } from "@/lib/mock-data";
 
 export function Navbar() {
-  const user = {
-    name: "Nachiket More",
-    email: "nachiket@example.com",
-  };
+  const user = mockUserDetails
 
-  const initials = user.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
+  const initials = user.firstName[0] +  user.lastName[0];
 
   const handleLogout = () => {
     console.log("Logout clicked");
@@ -39,7 +32,7 @@ export function Navbar() {
         </NavLink>
 
         {/* Center */}
-        <div className="flex gap-1 mx-auto ">
+        <div className="flex flex-1 justify-center gap-1 mx-auto ">
           <NavLink
             to="/dashboard"
             className={({ isActive }) =>
@@ -78,7 +71,7 @@ export function Navbar() {
 
             <PopoverContent className="w-auto p-1" align="end">
               <div className="pl-2 py-1.5 pr-11">
-                <p className="text-sm font-medium">{user.name}</p>
+                <p className="text-sm font-medium">{user.firstName} {user.lastName}</p>
                 <p className="text-xs text-muted-foreground">{user.email}</p>
               </div>
               <Button

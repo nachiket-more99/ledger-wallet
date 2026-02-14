@@ -15,7 +15,6 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path='/transactions' element={<Transactions />} />
       </Route>
-      {/* <Route path="*" element={<NotFound />} /> */}
     </Routes>
   )
 }
