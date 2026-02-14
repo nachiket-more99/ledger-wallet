@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import { Wallet, LogOut } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Popover,
@@ -8,35 +7,32 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { mockUserDetails } from "@/lib/mock-data";
 import { logout } from "@/api/auth.api";
-import { useNavigate } from "react-router-dom";
-import { getMe } from "@/api/user.api";
-
+import { useMe } from "@/hooks/useMe";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function Navbar() {
-  const navigate = useNavigate(); 
-  const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
+  const { data: user, isLoading, isError } = useMe();
 
-  useEffect(() => {
-    getMe()
-      .then(setUser)
-      .catch(() => {
-        navigate("/")
-      });
-  }, []);
-
-  if (!user) {
-    return <div className="h-16 border-b bg-background" />; 
-  }
-  const initials = user.firstName[0] +  user.lastName[0];
-
+  const queryClient = useQueryClient();
+  
   const handleLogout = async () => {
-    console.log("Logout clicked");
-    await logout();    
+    await logout();
+    queryClient.clear();
     navigate("/");
   };
 
+  if (isLoading) {
+    return <div className="h-16 border-b bg-background" />;
+  }
+
+  if (isError || !user) {
+    navigate("/");
+    return null;
+  }
+
+  const initials = user.firstName[0] + user.lastName[0];
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">

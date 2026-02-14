@@ -12,6 +12,8 @@ import {
   mockBalance,
   mockUserDetails,
 } from "@/lib/mock-data";
+import { useBalance } from "@/hooks/useBalance";
+import { useMe } from "@/hooks/useMe";
 
 interface Transactions {
   title: string;
@@ -23,6 +25,10 @@ interface Transactions {
 
 export function Dashboard() {
   const userTxns: Transactions[] = mockTransactions.slice(0, 5);
+  const { data: user } = useMe();
+  const { data: balance, isLoading } = useBalance();
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="space-y-8">
@@ -30,11 +36,11 @@ export function Dashboard() {
         <div className="p-8">
           <p className="text-sm font-medium opacity-80">Available Balance</p>
           <p className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
-            ₹{mockBalance.balance.toLocaleString("en-IN")}
+            ₹{balance.balance.toLocaleString("en-IN")}
           </p>
           <p className="mt-1 text-sm opacity-70">
-            {mockUserDetails.firstName} {mockUserDetails.lastName} ·{" "}
-            {mockUserDetails.email}
+            {user.firstName} {user.lastName} ·{" "}
+            {user.email}
           </p>
         </div>
       </Card>
