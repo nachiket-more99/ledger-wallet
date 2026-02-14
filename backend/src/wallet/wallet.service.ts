@@ -104,6 +104,7 @@ export class WalletService {
           title: 'Added Money',
           date: entry.createdAt.toISOString(),
           amount: entry.amount,
+          type: entry.type,
           direction: 'IN',
           referenceId: entry.referenceId,
         });
@@ -132,6 +133,7 @@ export class WalletService {
             : `Received from ${otherUser.firstName} ${otherUser.lastName}`,
           date: entry.createdAt.toISOString(),
           amount: entry.amount,
+          type: entry.type,
           direction: isSender ? 'OUT' : 'IN',
           referenceId: entry.referenceId,
         });

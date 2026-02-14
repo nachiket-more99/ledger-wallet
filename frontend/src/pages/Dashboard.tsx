@@ -22,15 +22,15 @@ interface Transactions {
 
 export function Dashboard() {
   const userTxns: Transactions[] = mockTransactions
-    // .slice(0, 5);
+    .slice(0, 5);
 
   return (
-    <main className="mx-auto max-w-5xl px-4 sm:px-6 space-y-8">
+    <div className="space-y-8">
       <Card className="bg-primary text-primary-foreground shadow-xl py-0">
         <div className="p-8">
           <p className="text-sm font-medium opacity-80">Available Balance</p>
           <p className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
-            ₹{mockBalance.balance}
+            ₹{mockBalance.balance.toLocaleString('en-IN')}
           </p>
           <p className="mt-1 text-sm opacity-70">
             {mockUserDetails.firstName} {mockUserDetails.lastName} · {mockUserDetails.email}
@@ -106,7 +106,7 @@ export function Dashboard() {
                     }`}
                   >
                     {txn.direction === "IN" ? "+" : "–"}{" "}
-                    ₹{txn.amount}
+                    ₹{txn.amount.toLocaleString('en-IN')}
                   </span>
                 </div>
               ))
@@ -114,6 +114,6 @@ export function Dashboard() {
           </CardContent>
         </Card>
       </div>
-    </main>
+    </div>
   );
 }
