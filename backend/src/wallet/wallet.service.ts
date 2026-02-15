@@ -63,7 +63,7 @@ export class WalletService {
       balance: balance,
     };
   }
-  async getTransactions(userIdValue: string) {
+  async getTransactions(userIdValue: string, limit?: number) {
     const cacheKey = `wallet:transactions:${userIdValue}`;
 
     const cached = await this.redisService.get(cacheKey);
@@ -94,6 +94,7 @@ export class WalletService {
     const ledgerEntries = await this.prisma.ledgerEntry.findMany({
       where: { userId: userIdValue },
       orderBy: { createdAt: 'desc' },
+      take: limit,
     });
 
     const transactions: TransactionDto[] = [];
