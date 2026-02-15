@@ -22,26 +22,23 @@ export class TransferService {
         try {
             // get wallet balance
             const balance = await this.wallet.getBalance(userId)
-            console.log("fetched balance: ", balance)
 
             // check if balance < dto.amount
             if (Number(balance.balance) < Number(dto.amount)) 
                 throw new ForbiddenException(
                     'Insufficient balance'
                 )
-            console.log("passed balance test")
                 
-            // check if recipent exisist recipientEmail => get id as toUserId
-            const recipentUser = await this.user.getUserByEmail(dto.recipientEmail)
+            // check if recipient exisist recipientEmail => get id as toUserId
+            const recipientUser = await this.user.getUserByEmail(dto.recipientEmail)
             
-            if (!recipentUser) 
+            if (!recipientUser) 
                 throw new ForbiddenException(
-                    'Recipent does not exists'
+                    'recipient does not exists'
                 )
-            console.log("passed recipent email id test")
 
             // prevent self transfer
-            if (recipentUser.id === userId) 
+            if (recipientUser.id === userId) 
                 throw new ForbiddenException('Cannot transfer to yourself');
                 
                 
@@ -49,12 +46,11 @@ export class TransferService {
             const transfer = await this.prisma.transfer.create({
                 data: {
                     fromUserId: userId,
-                    toUserId: recipentUser.id,
+                    toUserId: recipientUser.id,
                     amount: Number(dto.amount),
                     status: TransferStatusType.SUCCESS
                 }
             })
-            console.log("transfer created")
             
             // create entry in Ledger for DEBIT fromUserId
             await this.prisma.ledgerEntry.create({
@@ -66,30 +62,35 @@ export class TransferService {
                     referenceId: transfer.id
                 }
             })
-            console.log("DEBIT created")
-            // invalidate cache
+
+            // invalidate senders cache
             await this.redisService.delete(`wallet:balance:${userId}`);
+            await this.redisService.delete(`wallet:transactions:${userId}:all`);
+            await this.redisService.delete(`wallet:transactions:${userId}:${5}`);
 
             // create entry in Ledger for CREDIT toUSerId
             await this.prisma.ledgerEntry.create({
                 data: {
-                    userId: recipentUser.id,
+                    userId: recipientUser.id,
                     amount: transfer.amount,
                     type: LedgerType.CREDIT,
                     referenceType: ReferenceType.TRANSFER,
                     referenceId: transfer.id
                 }
             })
-            console.log("CREDIT created")
-            // invalidate cache
-            await this.redisService.delete(`wallet:balance:${recipentUser.id}`);
+        
+            // invalidate recievers cache
+            await this.redisService.delete(`wallet:balance:${recipientUser.id}`);
+            await this.redisService.delete(`wallet:transactions:${recipientUser.id}:all`);
+            await this.redisService.delete(`wallet:transactions:${recipientUser.id}:${5}`);
+
             
 
             //return response        
             return {
                 "message": "Money sent successfully",
-                "firstName" : dto.firstName,
-                "lastName" : dto.lastName,
+                "firstName" : recipientUser.firstName,
+                "lastName" : recipientUser.lastName,
                 "recipientEmail": dto.recipientEmail,
                 "amount": transfer.amount,
                 "status": transfer.status,
