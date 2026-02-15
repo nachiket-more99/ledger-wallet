@@ -38,7 +38,7 @@ export function Dashboard() {
         <div className="p-8">
           <p className="text-sm font-medium opacity-80">Available Balance</p>
           <p className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
-            ₹{balance.balance.toLocaleString("en-IN")}
+            ₹{balance.toLocaleString("en-IN")}
           </p>
           <p className="mt-1 text-sm opacity-70">
             {user.firstName} {user.lastName} ·{" "}
@@ -81,7 +81,7 @@ export function Dashboard() {
                 <p className="text-sm">Add money to get started</p>
               </div>
             ) : (
-              transactions.transactions.map((txn: Transaction) => (
+              transactions.map((txn: Transaction) => (
                 <div
                   key={txn.referenceId}
                   className="flex items-center justify-between px-6 py-4"

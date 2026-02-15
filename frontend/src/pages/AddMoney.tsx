@@ -5,16 +5,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { createPayment, webhook } from "@/api/payment.api";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Status = "form" | "pending" | "success" | "failed";
 
 export default function AddMoney() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [amount, setAmount] = useState("");
   const [status, setStatus] = useState<Status>("form");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const val = parseFloat(amount);
     if (!val || val <= 0) { setError("Enter a valid amount"); return; }
@@ -22,10 +25,21 @@ export default function AddMoney() {
     setError("");
     setStatus("pending");
     // Simulate payment
-    setTimeout(() => {
-      setStatus(Math.random() > 0.2 ? "success" : "failed");
-    }, 2000);
-  };
+    // setTimeout(() => {
+    //   setStatus(Math.random() > 0.2 ? "success" : "failed");
+    // }, 2000);
+    
+    const paymentRes = await createPayment(amount);
+
+    const webhookRes = await webhook(paymentRes.providerOrderId);
+
+    setStatus(webhookRes.status == "SUCCESS" ? "success" : "failed");
+
+      // refresh app data
+      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions", "recent"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions", "all"] });
+    };
 
   if (status === "pending") {
     return (

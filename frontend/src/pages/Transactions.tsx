@@ -27,15 +27,12 @@ export function Transactions() {
     return <div>Loading...</div>;
   }
 
-  // Check if the array is empty
-  const hasTransactions = transactions?.transactions && transactions.transactions.length > 0;
-
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">Transactions</h1>
       <Card className="p-0">
         <CardContent className="p-0">
-          {!hasTransactions ? (
+          {transactions.length === 0 ? (
             /* Empty State: Matching Dashboard Style */
             <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
               <ArrowUpRight className="mb-2 h-10 w-10 opacity-20" />
@@ -55,7 +52,7 @@ export function Transactions() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions.transactions.map((txn: Transaction) => (
+                {transactions.map((txn: Transaction) => (
                   <TableRow key={txn.referenceId}>
                     <TableCell className="text-sm">
                       {txn.date.split("T")[0]}
