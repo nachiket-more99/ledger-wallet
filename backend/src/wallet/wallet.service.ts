@@ -64,7 +64,7 @@ export class WalletService {
     };
   }
   async getTransactions(userIdValue: string, limit?: number) {
-    const cacheKey = `wallet:transactions:${userIdValue}`;
+    const cacheKey = `wallet:transactions:${userIdValue}:${limit ?? 'all'}`;
 
     const cached = await this.redisService.get(cacheKey);
 

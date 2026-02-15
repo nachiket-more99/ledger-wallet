@@ -56,6 +56,8 @@ export class PaymentService {
         
         // invalidate cache
         await this.redisService.delete(`wallet:balance:${userId}`);
+        await this.redisService.delete(`wallet:transactions:${userId}:all`);
+        await this.redisService.delete(`wallet:transactions:${userId}:${5}`);
 
 
         return {
