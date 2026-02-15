@@ -13,12 +13,10 @@ import { Wallet, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
 import { login } from "@/api/auth.api";
-
 import { useNavigate } from "react-router-dom";
 
-
 export function Login() {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -46,7 +44,7 @@ const navigate = useNavigate();
     try {
       await login(email, password);
 
-      navigate("/dashboard"); 
+      navigate("/dashboard");
     } catch (err: any) {
       // ✅ show backend error
       setErrors(err?.response?.data?.message ?? "Login failed");
@@ -74,6 +72,7 @@ const navigate = useNavigate();
               <Input
                 id="email"
                 type="email"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />

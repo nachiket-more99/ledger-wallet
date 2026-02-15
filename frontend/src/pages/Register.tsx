@@ -12,14 +12,22 @@ import { Label } from "@/components/ui/label";
 import { Wallet, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
+import { register } from "@/api/auth.api";
+import { useNavigate } from "react-router-dom";
+
 export function Register() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [errors, setErrors] = useState<{
+    firstName?: string;
+    lastName?: string;
     email?: string;
     password?: string;
     confirmPassword?: string;
@@ -39,11 +47,17 @@ export function Register() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    console.log({ email, password });
+    try {
+      await register(firstName, lastName, email, password);
+
+      navigate("/");
+    } catch (err: any) {
+      setErrors(err?.response?.data?.message ?? "Register failed");
+    }
   };
 
   return (
@@ -53,24 +67,55 @@ export function Register() {
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
             <Wallet className="h-6 w-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">Create Account</CardTitle>
+          <CardTitle className="text-2xl font-bold tracking-tight">
+            Create Account
+          </CardTitle>
           <CardDescription>Join Ledger Wallet today</CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSignUp}>
           <CardContent className="flex flex-col gap-6 px-6 pb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* First Name */}
+              <div className="grid gap-1">
+                <Label>First Name</Label>
+                <Input
+                  type="text"
+                  placeholder="Nachiket"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+                {errors.firstName && (
+                  <p className="text-xs text-destructive">{errors.firstName}</p>
+                )}
+              </div>
+
+              {/* Last Name */}
+              <div className="grid gap-1">
+                <Label>Last Name</Label>
+                <Input
+                  type="text"
+                  placeholder="More"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+                {errors.lastName && (
+                  <p className="text-xs text-destructive">{errors.lastName}</p>
+                )}
+              </div>
+            </div>
+
             {/* Email */}
             <div className="grid gap-1">
               <Label>Email</Label>
               <Input
                 type="email"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               {errors.email && (
-                <p className="text-xs text-destructive">
-                  {errors.email}
-                </p>
+                <p className="text-xs text-destructive">{errors.email}</p>
               )}
             </div>
 
@@ -92,9 +137,7 @@ export function Register() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-destructive">
-                  {errors.password}
-                </p>
+                <p className="text-xs text-destructive">{errors.password}</p>
               )}
             </div>
 
@@ -121,10 +164,7 @@ export function Register() {
 
             <p className="text-sm text-muted-foreground">
               Already have an account?{" "}
-              <a
-                className="font-medium text-primary hover:underline"
-                href="/"
-              >
+              <a className="font-medium text-primary hover:underline" href="/">
                 Log in
               </a>
             </p>
