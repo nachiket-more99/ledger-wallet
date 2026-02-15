@@ -7,29 +7,31 @@ import {
   ArrowUpRight,
   ArrowDownLeft,
 } from "lucide-react";
-import {
-  mockTransactions,
-  mockBalance,
-  mockUserDetails,
-} from "@/lib/mock-data";
+
 import { useBalance } from "@/hooks/useBalance";
 import { useMe } from "@/hooks/useMe";
+import { useRecentTransactions } from "@/hooks/useRecentTransactions";
 
-interface Transactions {
+export type Transaction = {
   title: string;
   date: string;
   amount: number;
-  direction: string;
+  type: string;
+  direction: "IN" | "OUT";
   referenceId: string;
-}
+};
 
 export function Dashboard() {
-  const userTxns: Transactions[] = mockTransactions.slice(0, 5);
   const { data: user } = useMe();
-  const { data: balance, isLoading } = useBalance();
+  const { data: balance, isLoading: balanceLoading } = useBalance();
+  const {
+    data: transactions,
+    isLoading: transactionsLoading,
+  } = useRecentTransactions();
 
-  if (isLoading) return <div>Loading...</div>;
-
+  if (balanceLoading || transactionsLoading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="space-y-8">
       <Card className="bg-primary text-primary-foreground shadow-xl py-0">
@@ -72,14 +74,14 @@ export function Dashboard() {
         </div>
         <Card className="py-0">
           <CardContent className="divide-y p-0">
-            {userTxns.length === 0 ? (
+            {transactions.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                 <ArrowUpRight className="mb-2 h-8 w-8" />
                 <p className="font-medium">No transactions yet</p>
                 <p className="text-sm">Add money to get started</p>
               </div>
             ) : (
-              userTxns.map((txn) => (
+              transactions.transactions.map((txn: Transaction) => (
                 <div
                   key={txn.referenceId}
                   className="flex items-center justify-between px-6 py-4"
