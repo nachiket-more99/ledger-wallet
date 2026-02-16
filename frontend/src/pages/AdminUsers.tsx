@@ -30,17 +30,25 @@ export default function AdminUsers() {
     return <Loader />;
   }
 
-  // 1. Filter users based on search input
-  const filteredUsers = (users || []).filter((user: User) => {
-    const searchTerm = search.toLowerCase();
-    return (
-      user.firstName.toLowerCase().includes(searchTerm) ||
-      user.lastName.toLowerCase().includes(searchTerm) ||
-      user.email.toLowerCase().includes(searchTerm)
-    );
-  });
 
-  const hasUsers = filteredUsers.length > 0;
+  const filtered = users.filter(
+    (user: User) =>
+      user.firstName.toLowerCase().includes(search.toLowerCase()) ||
+      user.lastName.toLowerCase().includes(search.toLowerCase()) ||
+      user.email.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // // 1. Filter users based on search input
+  // const filteredUsers = (users || []).filter((user: User) => {
+  //   const searchTerm = search.toLowerCase();
+  //   return (
+  //     user.firstName.toLowerCase().includes(searchTerm) ||
+  //     user.lastName.toLowerCase().includes(searchTerm) ||
+  //     user.email.toLowerCase().includes(searchTerm)
+  //   );
+  // });
+
+  const hasUsers = filtered.length > 0;
 
   return (
     <div>
@@ -82,8 +90,7 @@ export default function AdminUsers() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map((user: User) => (
-                  // 2. Added key prop and fixed double brace }}
+                {filtered.map((user: User) => (
                   <TableRow key={user.email}>
                     <TableCell className="font-medium">
                       {user.firstName} {user.lastName}
