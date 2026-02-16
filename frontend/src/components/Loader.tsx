@@ -1,9 +1,13 @@
+import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils"; 
 
-import { Spinner } from "@/components/ui/spinner"
+interface LoaderProps {
+  className?: string;
+}
 
-export function Loader() {
+export function Loader({ className }: LoaderProps) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-background">
+    <div className={cn("fixed inset-0 flex items-center justify-center bg-background", className)}>
       <Spinner className="size-7 text-primary" />
     </div>
   );
