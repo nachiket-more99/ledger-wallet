@@ -19,7 +19,7 @@ export class AuthService{
                 lastName: dto.lastName,
                 email: dto.email,
                 passwordHash: hash,
-                role: dto.role
+                role: "USER"
             }
         })
 
@@ -51,7 +51,7 @@ export class AuthService{
         // if user does not exists then thow exception
         if (!user)
             throw new ForbiddenException(
-                'Credentials incorrect'
+                'Incorrect credentials'
             )
 
         // compare password
@@ -60,7 +60,7 @@ export class AuthService{
         // if not match then exception
         if (!pwMatches)
             throw new ForbiddenException(
-                'Credentials incorrect'
+                'Incorrect credentials'
             )
 
         //send back the JWT payload 
@@ -77,6 +77,7 @@ export class AuthService{
         return {
             message: 'user is logged in',
             access_token: token,
+            role: user.role
         };   
     }
 }

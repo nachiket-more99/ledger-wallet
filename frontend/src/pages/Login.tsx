@@ -14,6 +14,7 @@ import { useState } from "react";
 
 import { login } from "@/api/auth.api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export function Login() {
   const navigate = useNavigate();
@@ -42,12 +43,16 @@ export function Login() {
     if (!validate()) return;
 
     try {
-      await login(email, password);
+      const user = await login(email, password);
 
+      if (user.role != "USER") {
+        toast.error("Access Denied");
+      }
+      
       navigate("/dashboard");
-    } catch (err: any) {
-      // ✅ show backend error
-      setErrors(err?.response?.data?.message ?? "Login failed");
+
+    } catch {
+      // handled globally by axios interceptor
     }
   };
 
