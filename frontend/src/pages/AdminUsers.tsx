@@ -38,16 +38,6 @@ export default function AdminUsers() {
       user.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  // // 1. Filter users based on search input
-  // const filteredUsers = (users || []).filter((user: User) => {
-  //   const searchTerm = search.toLowerCase();
-  //   return (
-  //     user.firstName.toLowerCase().includes(searchTerm) ||
-  //     user.lastName.toLowerCase().includes(searchTerm) ||
-  //     user.email.toLowerCase().includes(searchTerm)
-  //   );
-  // });
-
   const hasUsers = filtered.length > 0;
 
   return (
@@ -78,7 +68,7 @@ export default function AdminUsers() {
           </p>
         </div>
       ) : (
-        <Card>
+        <Card className="p-0">
           <CardContent className="p-0">
             <Table>
               <TableHeader>

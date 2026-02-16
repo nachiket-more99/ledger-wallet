@@ -9,6 +9,7 @@ import SendMoney from "./pages/SendMoney";
 import { Toaster } from "@/components/ui/sonner";
 import { AdminLayout } from "./layouts/AdminLayout";
 import AdminUsers from "./pages/AdminUsers";
+import AdminTransaction from "./pages/AdminTransactions";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
 
         <Route element={<AdminLayout />}>
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/transactions" element={<AdminTransaction />} />
         </Route>
       </Routes>
       <Toaster />
