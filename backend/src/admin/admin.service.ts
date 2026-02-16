@@ -21,7 +21,7 @@ export class AdminService {
       return {
         message: 'Users fetched',
         source: 'cache',
-        balance: JSON.parse(cached),
+        users: JSON.parse(cached),
       };
     }
     const users = await this.prisma.user.findMany({
