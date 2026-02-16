@@ -29,9 +29,14 @@ export function Dashboard() {
     isLoading: transactionsLoading,
   } = useRecentTransactions();
 
+
   if (balanceLoading || transactionsLoading) {
     return <div>Loading...</div>;
   }
+  
+  const hasTransactions =
+    transactions?.transactions && transactions.transactions.length > 0;
+
   return (
     <div className="space-y-8">
       <Card className="bg-primary text-primary-foreground shadow-xl py-0">
@@ -74,14 +79,14 @@ export function Dashboard() {
         </div>
         <Card className="py-0">
           <CardContent className="divide-y p-0">
-            {transactions.length === 0 ? (
+            {!hasTransactions ? (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                 <ArrowUpRight className="mb-2 h-8 w-8" />
                 <p className="font-medium">No transactions yet</p>
                 <p className="text-sm">Add money to get started</p>
               </div>
             ) : (
-              transactions.map((txn: Transaction) => (
+              transactions.transactions.map((txn: Transaction) => (
                 <div
                   key={txn.referenceId}
                   className="flex items-center justify-between px-6 py-4"

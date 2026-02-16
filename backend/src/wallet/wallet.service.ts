@@ -63,8 +63,13 @@ export class WalletService {
       balance: balance,
     };
   }
-  async getTransactions(userIdValue: string, limit?: number) {
-    const cacheKey = `wallet:transactions:${userIdValue}:${limit ?? 'all'}`;
+  async getTransactions(
+    userIdValue: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
+    const skip = (page - 1) * limit;
+    const cacheKey = `wallet:transactions:${userIdValue}:${page}:${limit}`;
 
     const cached = await this.redisService.get(cacheKey);
 
@@ -72,7 +77,7 @@ export class WalletService {
       return {
         message: 'Transactions fetched',
         source: 'cache',
-        transactions: JSON.parse(cached),
+        result: JSON.parse(cached),
       };
     }
 
@@ -91,11 +96,23 @@ export class WalletService {
     //     }
     // })
 
-    const ledgerEntries = await this.prisma.ledgerEntry.findMany({
-      where: { userId: userIdValue },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-    });
+    // const ledgerEntries = await this.prisma.ledgerEntry.findMany({
+    //   where: { userId: userIdValue },
+    //   orderBy: { createdAt: 'desc' },
+    //   take: limit,
+    // });
+
+    const [ledgerEntries, total] = await Promise.all([
+      this.prisma.ledgerEntry.findMany({
+        where: { userId: userIdValue },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.ledgerEntry.count({
+        where: { userId: userIdValue },
+      }),
+    ]);
 
     const transactions: TransactionDto[] = [];
 
@@ -140,13 +157,20 @@ export class WalletService {
         });
       }
     }
+    const result = {
+      transactions,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
 
-    await this.redisService.set(cacheKey, transactions, 60);
+    await this.redisService.set(cacheKey, result, 60);
 
     return {
       message: 'Transactions fetched',
       source: 'db',
-      transactions: transactions,
+      result,
     };
   }
 }

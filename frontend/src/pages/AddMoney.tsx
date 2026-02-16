@@ -20,26 +20,32 @@ export default function AddMoney() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const val = parseFloat(amount);
-    if (!val || val <= 0) { setError("Enter a valid amount"); return; }
-    if (val > 100000) { setError("Maximum ₹1,00,000 per transaction"); return; }
+    if (!val || val <= 0) {
+      setError("Enter a valid amount");
+      return;
+    }
+    if (val > 100000) {
+      setError("Maximum ₹1,00,000 per transaction");
+      return;
+    }
     setError("");
     setStatus("pending");
     // Simulate payment
     // setTimeout(() => {
     //   setStatus(Math.random() > 0.2 ? "success" : "failed");
     // }, 2000);
-    
+
     const paymentRes = await createPayment(amount);
 
     const webhookRes = await webhook(paymentRes.providerOrderId);
 
-    setStatus(webhookRes.status == "SUCCESS" ? "success" : "failed");
+    if (webhookRes.status === "SUCCESS") {
+      await queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
+      await queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    }
 
-      // refresh app data
-      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
-      queryClient.invalidateQueries({ queryKey: ["transactions", "recent"] });
-      queryClient.invalidateQueries({ queryKey: ["transactions", "all"] });
-    };
+    setStatus(webhookRes.status == "SUCCESS" ? "success" : "failed");
+  };
 
   if (status === "pending") {
     return (
@@ -48,7 +54,9 @@ export default function AddMoney() {
           <CardContent className="py-12">
             <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-primary" />
             <p className="text-lg font-semibold">Processing payment…</p>
-            <p className="mt-1 text-sm text-muted-foreground">Please wait while we add money to your wallet</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Please wait while we add money to your wallet
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -61,8 +69,12 @@ export default function AddMoney() {
         <Card className="w-full max-w-sm text-center">
           <CardContent className="py-12">
             <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-success" />
-            <p className="text-lg font-semibold">₹{parseFloat(amount)} added successfully</p>
-            <p className="mt-1 text-sm text-muted-foreground">Your wallet has been updated</p>
+            <p className="text-lg font-semibold">
+              ₹{parseFloat(amount)} added successfully
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Your wallet has been updated
+            </p>
             <Button onClick={() => navigate("/dashboard")} className="mt-6">
               Back to Dashboard
             </Button>
@@ -79,9 +91,13 @@ export default function AddMoney() {
           <CardContent className="py-12">
             <XCircle className="mx-auto mb-4 h-12 w-12 text-destructive" />
             <p className="text-lg font-semibold">Payment failed</p>
-            <p className="mt-1 text-sm text-muted-foreground">Something went wrong. Please try again.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Something went wrong. Please try again.
+            </p>
             <div className="mt-6 flex gap-3 justify-center">
-              <Button variant="outline" onClick={() => navigate("/dashboard")}>Dashboard</Button>
+              <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                Dashboard
+              </Button>
               <Button onClick={() => setStatus("form")}>Try Again</Button>
             </div>
           </CardContent>
@@ -92,19 +108,26 @@ export default function AddMoney() {
 
   return (
     <div className="mx-auto max-w-md">
-      <button onClick={() => navigate(-1)} className="mb-6 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-6 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="h-4 w-4" /> Back
       </button>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold leading-none tracking-tight">Add Money</CardTitle>
+          <CardTitle className="text-2xl font-semibold leading-none tracking-tight">
+            Add Money
+          </CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="amount">Amount</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">₹</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
+                  ₹
+                </span>
                 <Input
                   id="amount"
                   type="number"

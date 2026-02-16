@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -7,9 +7,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { useAllTransactions } from "@/hooks/useAllTransactions";
-import { ArrowUpRight } from "lucide-react"; // Import the icon
+import { ArrowUpRight } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export type Transaction = {
   title: string;
@@ -21,26 +30,36 @@ export type Transaction = {
 };
 
 export function Transactions() {
-  const { data: transactions, isLoading: transactionsLoading } = useAllTransactions();
+  const [page, setPage] = useState(1);
 
-  if (transactionsLoading) {
+  const {
+    data: transactions,
+    isLoading,
+    isFetching, // keeps old data while loading next page
+  } = useAllTransactions(page);
+
+  if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  const hasTransactions =
+    transactions?.transactions && transactions.transactions.length > 0;
 
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">Transactions</h1>
+
       <Card className="p-0">
         <CardContent className="p-0">
-          {transactions.length === 0 ? (
-            /* Empty State: Matching Dashboard Style */
+          {!hasTransactions ? (
             <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
               <ArrowUpRight className="mb-2 h-10 w-10 opacity-20" />
               <p className="text-lg font-medium">No transactions yet</p>
-              <p className="text-sm">Your transaction history will appear here.</p>
+              <p className="text-sm">
+                Your transaction history will appear here.
+              </p>
             </div>
           ) : (
-            /* Table State */
             <Table>
               <TableHeader>
                 <TableRow>
@@ -52,12 +71,14 @@ export function Transactions() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions.map((txn: Transaction) => (
+                {transactions.transactions.map((txn: Transaction) => (
                   <TableRow key={txn.referenceId}>
                     <TableCell className="text-sm">
                       {txn.date.split("T")[0]}
                     </TableCell>
+
                     <TableCell className="text-sm">{txn.title}</TableCell>
+
                     <TableCell>
                       <Badge
                         variant="secondary"
@@ -70,9 +91,11 @@ export function Transactions() {
                         {txn.type === "CREDIT" ? "Credit" : "Debit"}
                       </Badge>
                     </TableCell>
+
                     <TableCell className="text-sm text-muted-foreground">
                       {txn.referenceId}
                     </TableCell>
+
                     <TableCell className="text-right text-sm font-semibold">
                       <span
                         className={
@@ -95,6 +118,53 @@ export function Transactions() {
           )}
         </CardContent>
       </Card>
+
+      {/* Pagination */}
+      <div className="mt-6">
+        {hasTransactions && (
+          <Pagination className="w-auto mx-0 flex items-center justify-center">
+            <PaginationContent className="flex items-center gap-8">
+              <PaginationItem>
+                <Button
+                  variant="outline"
+                  className={
+                    page === 1
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                >
+                  Previous
+                </Button>
+              </PaginationItem>
+
+              {/* Wrap the span in an item to keep flex behavior consistent */}
+              <PaginationItem>
+                <span className="text-sm text-muted-foreground whitespace-nowrap">
+                  Page {page} of {transactions.totalPages}
+                  {isFetching && " • Updating…"}
+                </span>
+              </PaginationItem>
+
+              <PaginationItem>
+                <Button
+                  variant="outline"
+                  className={
+                    page === transactions.totalPages
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
+                  onClick={() =>
+                    setPage((p) => Math.min(transactions.totalPages, p + 1))
+                  }
+                >
+                  Next
+                </Button>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
+      </div>
     </div>
   );
 }

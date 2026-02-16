@@ -20,8 +20,7 @@ export class WalletController {
     @UseGuards(JwtGuard, RolesGuard)
     @Roles('USER')
     @Get('transactions')
-    getTransactions(@Req() req: Request & { user: any }, @Query('limit') limit?: string) {
-        return this.walletService.getTransactions(req.user.id, limit ? Number(limit) : undefined,);
+    getTransactions(@Req() req: Request & { user: any }, @Query('page') page?: string, @Query('limit') limit?: string,) {
+        return this.walletService.getTransactions(req.user.id, page ? Number(page) : 1, limit ? Number(limit) : 10 );
     }
-    
 }
