@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { useEffect } from "react";
 import { http } from "@/api/http";
 
-export function AppLayout() {
+export function UserLayout() {
   const location = useLocation();
   const navigate = useNavigate();
 

@@ -8,7 +8,7 @@ import { RolesGuard } from 'src/guard/roles.guard';
 @Controller('user')
 export class UserController {
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles('USER')
+  @Roles('USER', 'ADMIN')
   @Get('me')
   getMe(@Req() req: Request & { user: any }) {
     return {

@@ -45,11 +45,16 @@ export function Login() {
     try {
       const user = await login(email, password);
 
-      if (user.role != "USER") {
+      if (user.role == "USER") {
+        navigate("/dashboard");
+      }
+      else if (user.role == "ADMIN") {
+        navigate("/admin/users");
+      }
+      else {
         toast.error("Access Denied");
       }
       
-      navigate("/dashboard");
 
     } catch {
       // handled globally by axios interceptor
