@@ -19,6 +19,7 @@ import { useAllTransactions } from "@/hooks/useAllTransactions";
 import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Loader } from "@/components/Loader";
 
 export type Transaction = {
   title: string;
@@ -39,7 +40,7 @@ export function Transactions() {
   } = useAllTransactions(page);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+      return <Loader />;
   }
 
   const hasTransactions =

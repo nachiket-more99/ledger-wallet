@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
 import { useBalance } from "@/hooks/useBalance";
 import { sendMoney } from "@/api/transfer.api";
+import { Loader } from "@/components/Loader";
 
 type Status = "form" | "pending" | "success" | "failed";
 
@@ -16,7 +17,7 @@ export default function SendMoney() {
   const { data: balance, isLoading: balanceLoading } = useBalance();
 
   if (balanceLoading) {
-    return <div>Loading...</div>;
+      return <Loader />;
   }
   const queryClient = useQueryClient();
   const [recipientEmail, setrecipientEmail] = useState("");
@@ -45,15 +46,19 @@ export default function SendMoney() {
     if (!validate()) return;
     setErrors({});
     setStatus("pending");
+    
+    try {
+      const transferRes = await sendMoney(recipientEmail, amount);
+      
+      setStatus(transferRes.status === "SUCCESS" ? "success" : "failed");
+      
+      // Refresh app data
+      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] }); 
 
-    const transferRes = await sendMoney(recipientEmail, amount);
-
-    setStatus(transferRes.status == "SUCCESS" ? "success" : "failed");
-
-    // refresh app data
-    queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
-    queryClient.invalidateQueries({ queryKey: ["transactions", "recent"] });
-    queryClient.invalidateQueries({ queryKey: ["transactions", "all"] });
+    } catch (err: any) {
+      setStatus("failed");
+    }
   };
 
   if (status === "pending") {

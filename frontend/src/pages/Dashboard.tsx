@@ -11,6 +11,7 @@ import {
 import { useBalance } from "@/hooks/useBalance";
 import { useMe } from "@/hooks/useMe";
 import { useRecentTransactions } from "@/hooks/useRecentTransactions";
+import { Loader } from "@/components/Loader";
 
 export type Transaction = {
   title: string;
@@ -31,7 +32,7 @@ export function Dashboard() {
 
 
   if (balanceLoading || transactionsLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
   
   const hasTransactions =
