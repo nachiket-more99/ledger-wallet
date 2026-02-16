@@ -65,8 +65,8 @@ export class TransferService {
 
             // invalidate senders cache
             await this.redisService.delete(`wallet:balance:${userId}`);
-            await this.redisService.delete(`wallet:transactions:${userId}:all`);
-            await this.redisService.delete(`wallet:transactions:${userId}:${5}`);
+            // await this.redisService.delete(`wallet:transactions:${userId}:*`);
+            await this.redisService.deletePattern(`wallet:transactions:${userId}:*`);
 
             // create entry in Ledger for CREDIT toUSerId
             await this.prisma.ledgerEntry.create({
@@ -81,8 +81,7 @@ export class TransferService {
         
             // invalidate recievers cache
             await this.redisService.delete(`wallet:balance:${recipientUser.id}`);
-            await this.redisService.delete(`wallet:transactions:${recipientUser.id}:all`);
-            await this.redisService.delete(`wallet:transactions:${recipientUser.id}:${5}`);
+            await this.redisService.delete(`wallet:transactions:${recipientUser.id}:*`);
 
             
 
