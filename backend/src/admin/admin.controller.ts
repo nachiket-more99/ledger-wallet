@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { JwtGuard } from 'src/guard';
 import { RolesGuard } from 'src/guard/roles.guard';
@@ -11,14 +11,14 @@ export class AdminController {
     @UseGuards(JwtGuard, RolesGuard)
     @Roles('ADMIN')
     @Get('users')
-    getUsers(){
-        return this.admin.getUsersWithBalances()
+    getUsers(@Req() req: Request & { user: any }){
+        return this.admin.getUsersWithBalances(req.user.id)
     }
 
     @UseGuards(JwtGuard, RolesGuard)
     @Roles('ADMIN')
     @Get('transactions')
-    getTransactions(){
-        return this.admin.getTransactions()
+    getTransactions(@Req() req: Request & { user: any }, @Query('page') page?: string, @Query('limit') limit?: string,){
+        return this.admin.getTransactions(req.user.id, page ? Number(page) : 1, limit ? Number(limit) : 8)
     }
 }

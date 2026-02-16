@@ -11,9 +11,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Loader } from "@/components/Loader";
 import { useAdminTransactions } from "@/hooks/useAdminTransactions";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export type Transaction = {
   user: {
@@ -28,14 +36,19 @@ export type Transaction = {
 };
 
 export default function AdminTransaction() {
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const { data: transactions, isLoading } = useAdminTransactions();
+  const {
+    data: result,
+    isLoading,
+    isFetching,
+  } = useAdminTransactions(page);
 
   if (isLoading) {
     return <Loader />;
   }
 
-  const filtered = transactions.filter(
+  const filtered = result.transactions.filter(
     (transaction: Transaction) =>
       transaction.user.firstName.toLowerCase().includes(search.toLowerCase()) ||
       transaction.user.lastName.toLowerCase().includes(search.toLowerCase()) ||
@@ -72,64 +85,114 @@ export default function AdminTransaction() {
           </p>
         </div>
       ) : (
-        <Card className="p-0">
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Reference ID</TableHead>
-                  <TableHead>Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.map((transaction: Transaction) => (
-                  <TableRow key={transaction.user.email}>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {transaction.createdAt.split("T")[0]}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {transaction.user.firstName} {transaction.user.lastName}
-                    </TableCell>
-
-                    <TableCell className="text-sm text-muted-foreground">
-                      <Badge
-                        variant="secondary"
-                        className={
-                          transaction.type === "CREDIT"
-                            ? "bg-success/10 text-success hover:bg-success/20"
-                            : "bg-destructive/10 text-destructive hover:bg-destructive/20"
-                        }
-                      >
-                        {transaction.type === "CREDIT" ? "Credit" : "Debit"}
-                      </Badge>
-                    </TableCell>
-
-                    <TableCell className="text-sm text-muted-foreground">
-                      {transaction.referenceId}
-                    </TableCell>
-
-                    <TableCell className="text-sm font-semibold">
-                      {/* ₹{transaction.amount.toLocaleString("en-IN")} */}
-                      <span
-                        className={
-                          transaction.type === "CREDIT"
-                            ? "text-success"
-                            : "text-destructive"
-                        }
-                      >
-                        {transaction.type === "CREDIT" ? "+" : "–"}{" ₹"}
-                        {transaction.amount.toLocaleString("en-IN")}
-                      </span>
-                    </TableCell>
+        <>
+          <Card className="p-0">
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>User</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Reference ID</TableHead>
+                    <TableHead>Amount</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map((transaction: Transaction) => (
+                    <TableRow>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {transaction.createdAt.split("T")[0]}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {transaction.user.firstName} {transaction.user.lastName}
+                      </TableCell>
+
+                      <TableCell className="text-sm text-muted-foreground">
+                        <Badge
+                          variant="secondary"
+                          className={
+                            transaction.type === "CREDIT"
+                              ? "bg-success/10 text-success hover:bg-success/20"
+                              : "bg-destructive/10 text-destructive hover:bg-destructive/20"
+                          }
+                        >
+                          {transaction.type === "CREDIT" ? "Credit" : "Debit"}
+                        </Badge>
+                      </TableCell>
+
+                      <TableCell className="text-sm text-muted-foreground">
+                        {transaction.referenceId}
+                      </TableCell>
+
+                      <TableCell className="text-sm font-semibold">
+                        {/* ₹{transaction.amount.toLocaleString("en-IN")} */}
+                        <span
+                          className={
+                            transaction.type === "CREDIT"
+                              ? "text-success"
+                              : "text-destructive"
+                          }
+                        >
+                          {transaction.type === "CREDIT" ? "+" : "–"}
+                          {" ₹"}
+                          {transaction.amount.toLocaleString("en-IN")}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          {/* Pagination */}
+          <div className="mt-6">
+            {hasTransactions && (
+              <Pagination className="w-auto mx-0 flex items-center justify-center">
+                <PaginationContent className="flex items-center gap-8">
+                  <PaginationItem>
+                    <Button
+                      variant="outline"
+                      className={
+                        page === 1
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    >
+                      Previous
+                    </Button>
+                  </PaginationItem>
+
+                  {/* Wrap the span in an item to keep flex behavior consistent */}
+                  <PaginationItem>
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">
+                      Page {page} of {result.totalPages}
+                      {isFetching && " • Updating…"}
+                    </span>
+                  </PaginationItem>
+
+                  <PaginationItem>
+                    <Button
+                      variant="outline"
+                      className={
+                        page === result.totalPages
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                      onClick={() =>
+                        setPage((p) => Math.min(result.totalPages, p + 1))
+                      }
+                    >
+                      Next
+                    </Button>
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
