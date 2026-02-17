@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+[role="dialog"][data-state="open"] {
+  background-color: var(--sidebar-accent);
+  border-color: var(--sidebar-accent);
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /* Tailwind v4 theme bridge */

@@ -47,7 +47,7 @@ export function Navbar() {
         </NavLink>
 
         {/* Center */}
-        <div className="flex flex-1 justify-center gap-1 mx-auto ">
+        <nav className="flex flex-1 justify-center gap-1 mx-auto hidden items-center sm:flex ">
           <NavLink
             to="/dashboard"
             className={({ isActive }) =>
@@ -69,7 +69,7 @@ export function Navbar() {
           >
             Transactions
           </NavLink>
-        </div>
+        </nav>
 
         {/* Right: Avatar */}
         <div className="ml-auto">
