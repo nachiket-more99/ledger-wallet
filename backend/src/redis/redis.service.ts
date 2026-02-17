@@ -5,12 +5,21 @@ import Redis from 'ioredis';
 export class RedisService implements OnModuleDestroy {
     private redis: Redis;
 
-    constructor(){
-        this.redis = new Redis({
+    constructor() {
+        this.redis = process.env.REDIS_URL
+        ? new Redis(process.env.REDIS_URL) // Upstash
+        : new Redis({
             host: process.env.REDIS_HOST || 'localhost',
-            port: Number(process.env.REDIS_PORT) || 6379
-        })
+            port: Number(process.env.REDIS_PORT) || 6379,
+            }); // local
     }
+
+    // constructor(){
+    //     this.redis = new Redis({
+    //         host: process.env.REDIS_HOST || 'localhost',
+    //         port: Number(process.env.REDIS_PORT) || 6379
+    //     })
+    // }
 
     async get(key: string){
         return await this.redis.get(key)
@@ -46,6 +55,11 @@ export class RedisService implements OnModuleDestroy {
         }
     }
 
+    async healthCheck() {
+        await this.redis.ping();
+        return { redis: { status: 'up' } };
+    }
+    
     async onModuleDestroy() {
         await this.redis.quit()
     }
