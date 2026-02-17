@@ -1,8 +1,10 @@
 import axios from "axios";
 import { toast } from "sonner";
 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || "/";
+
 export const http = axios.create({
-  baseURL: "",
+  baseURL: BASE_URL,
   withCredentials: true,
 });
 
