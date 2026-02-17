@@ -8,10 +8,17 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
 
+  const isProduction = process.env.NODE_ENV === 'production';
+
   app.enableCors({
-    origin: ['http://localhost:5173', 'https://ledger-wallet-tau.vercel.app/'],
-    credentials: true,
+    origin: isProduction
+      ? ['https://ledger-wallet-tau.vercel.app'] 
+      : ['http://localhost:5173'],               
+    credentials: true,                           
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
   });
+
 
   app.useGlobalPipes(
     new ValidationPipe({
