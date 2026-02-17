@@ -19,11 +19,13 @@ export class AuthController {
   ) {
     const result = await this.authService.login(dto);
 
+    const isProduction = process.env.NODE_ENV === 'production';
+
     res.cookie('access_token', result.access_token, {
         httpOnly: true,
-        secure: false,      
-        sameSite: 'lax',    
-        maxAge: 900000,
+        secure: isProduction,               // true on Render (HTTPS)
+        sameSite: isProduction ? 'none' : 'lax', // none for cross-site, lax for local
+        maxAge: 900_000,
         path: '/',
     });
 
