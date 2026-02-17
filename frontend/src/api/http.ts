@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 export const http = axios.create({
-  baseURL: "http://localhost:3333",
+  baseURL: "",
   withCredentials: true,
 });
 

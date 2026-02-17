@@ -15,8 +15,6 @@ import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Loader } from "@/components/Loader";
 import { useAdminTransactions } from "@/hooks/useAdminTransactions";
