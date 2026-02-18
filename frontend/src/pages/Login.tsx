@@ -13,7 +13,7 @@ import { Wallet, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
 import { login } from "@/api/auth.api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export function Login() {
@@ -47,15 +47,11 @@ export function Login() {
 
       if (user.role == "USER") {
         navigate("/dashboard");
-      }
-      else if (user.role == "ADMIN") {
+      } else if (user.role == "ADMIN") {
         navigate("/admin/users");
-      }
-      else {
+      } else {
         toast.error("Access Denied");
       }
-      
-
     } catch {
       // handled globally by axios interceptor
     }
@@ -124,12 +120,18 @@ export function Login() {
 
             <p className="text-sm text-muted-foreground">
               Don't have an account?{" "}
-              <a
+              <Link
+                to="/register"
+                className="font-medium text-primary hover:underline"
+              >
+                Register
+              </Link>
+              {/* <a
                 className="font-medium text-primary hover:underline"
                 href="/register"
               >
                 Register
-              </a>
+              </a> */}
             </p>
           </CardFooter>
         </form>
