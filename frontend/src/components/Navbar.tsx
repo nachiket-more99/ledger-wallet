@@ -20,7 +20,7 @@ export function Navbar() {
   const handleLogout = async () => {
     await logout();
     queryClient.clear();
-    navigate("/");
+    navigate("/login");
   };
 
   if (isLoading) {
@@ -28,7 +28,7 @@ export function Navbar() {
   }
 
   if (isError || !user) {
-    navigate("/");
+    navigate("/login");
     return null;
   }
 

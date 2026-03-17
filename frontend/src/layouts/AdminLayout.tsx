@@ -12,7 +12,7 @@ export function AdminLayout() {
       try {
         await http.get("/user/me");
       } catch (err) {
-        navigate("/", { replace: true });
+        navigate("/login", { replace: true });
       }
     };
 

@@ -54,7 +54,7 @@ export function Register() {
     try {
       await register(firstName, lastName, email, password);
 
-      navigate("/");
+      navigate("/login");
     } catch (err: any) {
       setErrors(err?.response?.data?.message ?? "Register failed");
     }
@@ -164,7 +164,7 @@ export function Register() {
 
             <p className="text-sm text-muted-foreground">
               Already have an account?{" "}
-              <a className="font-medium text-primary hover:underline" href="/">
+              <a className="font-medium text-primary hover:underline" href="/login">
                 Log in
               </a>
             </p>

@@ -32,11 +32,11 @@ export default function AdminSidebar() {
   const handleLogout = async () => {
     await logout();
     queryClient.clear();
-    navigate("/");
+    navigate("/login");
   };
 
   if (isError || !user) {
-    navigate("/");
+    navigate("/login");
     return null;
   }
 

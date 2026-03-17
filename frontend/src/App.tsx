@@ -10,12 +10,14 @@ import { Toaster } from "@/components/ui/sonner";
 import { AdminLayout } from "./layouts/AdminLayout";
 import AdminUsers from "./pages/AdminUsers";
 import AdminTransaction from "./pages/AdminTransactions";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route element={<UserLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />

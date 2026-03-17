@@ -16,7 +16,7 @@ http.interceptors.response.use(
 
     if (isUnauthorized) {
       // Force a hard redirect to clear all stuck React states/loops
-      window.location.href = "/";
+      window.location.href = "/login";
       return Promise.reject(error);
     }
     // Only show toast if it's NOT the background auth check
