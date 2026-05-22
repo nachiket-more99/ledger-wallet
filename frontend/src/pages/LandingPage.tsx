@@ -37,10 +37,10 @@ const LandingPage = () => {
 
       {/* HERO */}
       <section className="max-w-3xl mx-auto px-6 pt-24 pb-16 text-center">
-<div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-medium px-4 py-2 rounded-full border border-primary/20 mb-8">
+{/* <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-medium px-4 py-2 rounded-full border border-primary/20 mb-8">
           <span className="w-2 h-2 bg-primary rounded-full"></span>
           Full-stack fintech demo · React + NestJS + PostgreSQL + Redis
-        </div>
+        </div> */}
 
         <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 leading-tight mb-6">
           A digital wallet built<br />
