@@ -8,13 +8,14 @@ import { PaymentModule } from './payment/payment.module';
 import { TransferModule } from './transfer/transfer.module';
 import { AdminModule } from './admin/admin.module';
 import { HealthModule } from './health/health.module';
+import { ElasticsearchModule } from './elasticsearch/elasticsearch.module';
 
 @Module({
   imports: [ 
     ConfigModule.forRoot({
       isGlobal: true,
     }), 
-    HealthModule, AuthModule, PrismaModule, WalletModule, PaymentModule, TransferModule, AdminModule],
+    HealthModule, AuthModule, PrismaModule, WalletModule, PaymentModule, TransferModule, AdminModule, ElasticsearchModule],
   controllers: [UserController]
 })
 export class AppModule {}

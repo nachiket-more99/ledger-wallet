@@ -5,10 +5,12 @@ import { TransferDto } from './dto';
 import { WalletService } from 'src/wallet/wallet.service';
 import { UserService } from 'src/user/user.service';
 import { LedgerType, ReferenceType, TransferStatusType } from '@prisma/client';
+import { LedgerSearchService } from 'src/elasticsearch/ledger-search.service';
 
 @Injectable()
 export class TransferService {
-    constructor(private prisma: PrismaService, private redisService: RedisService, private wallet: WalletService, private user: UserService){}
+    constructor(private prisma: PrismaService, private redisService: RedisService, private wallet: WalletService, private user: UserService, 
+        private ledgerSearch: LedgerSearchService){}
 
     async transfer(userId: string, dto: TransferDto){
         const lockKey = `wallet:lock:${userId}`
@@ -53,7 +55,7 @@ export class TransferService {
             })
             
             // create entry in Ledger for DEBIT fromUserId
-            await this.prisma.ledgerEntry.create({
+            const debitEntry = await this.prisma.ledgerEntry.create({
                 data: {
                     userId: userId,
                     amount: transfer.amount,
@@ -62,6 +64,7 @@ export class TransferService {
                     referenceId: transfer.id
                 }
             })
+            void this.ledgerSearch.indexLedgerEntry(debitEntry.id);
 
             // invalidate senders cache
             await this.redisService.delete(`wallet:balance:${userId}`);
@@ -69,7 +72,7 @@ export class TransferService {
             await this.redisService.deletePattern(`wallet:transactions:${userId}:*`);
 
             // create entry in Ledger for CREDIT toUSerId
-            await this.prisma.ledgerEntry.create({
+            const creditEntry = await this.prisma.ledgerEntry.create({
                 data: {
                     userId: recipientUser.id,
                     amount: transfer.amount,
@@ -78,6 +81,7 @@ export class TransferService {
                     referenceId: transfer.id
                 }
             })
+            void this.ledgerSearch.indexLedgerEntry(creditEntry.id);
         
             // invalidate recievers cache
             await this.redisService.delete(`wallet:balance:${recipientUser.id}`);

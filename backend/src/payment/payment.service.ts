@@ -4,12 +4,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { LedgerType, PaymentStatusType, ReferenceType } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { RedisService } from 'src/redis/redis.service';
+import { LedgerSearchService } from 'src/elasticsearch/ledger-search.service';
 
 @Injectable()
 export class PaymentService {
   constructor(
     private prisma: PrismaService,
     private redisService: RedisService,
+    private ledgerSearch: LedgerSearchService
   ) {}
 
   async create(userId: string, dto: PaymentDto) {
@@ -46,7 +48,17 @@ export class PaymentService {
       },
     });
 
-    await this.prisma.ledgerEntry.create({
+    // await this.prisma.ledgerEntry.create({
+    //   data: {
+    //     userId: userId,
+    //     amount: payment.amount,
+    //     type: LedgerType.CREDIT,
+    //     referenceType: ReferenceType.PAYMENT,
+    //     referenceId: payment.id,
+    //   },
+    // });
+
+    const ledgerEntry = await this.prisma.ledgerEntry.create({
       data: {
         userId: userId,
         amount: payment.amount,
@@ -55,6 +67,8 @@ export class PaymentService {
         referenceId: payment.id,
       },
     });
+
+    void this.ledgerSearch.indexLedgerEntry(ledgerEntry.id);
 
     // invalidate cache
     await this.redisService.delete(`wallet:balance:${userId}`);
